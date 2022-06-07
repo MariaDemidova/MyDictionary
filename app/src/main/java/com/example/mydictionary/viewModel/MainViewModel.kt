@@ -1,41 +1,40 @@
 package com.example.mydictionary.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.mydictionary.model.data.AppState
-import com.example.mydictionary.model.dataSource.DataSourceLocal
-import com.example.mydictionary.model.dataSource.DataSourceRemote
-import com.example.mydictionary.model.repository.RepoImpl
-
+import com.example.mydictionary.utils.parseSearchResults
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
+import javax.inject.Inject
 
-class MainViewModel(
-    private val interactor: MainInteractor = MainInteractor(
-        RepoImpl(DataSourceRemote()),
-        RepoImpl(DataSourceLocal())
-    )
+class MainViewModel @Inject constructor(
+    private val interactor: MainInteractor) : BaseViewModel<AppState>() {
 
-) : BaseViewModel<AppState>() {
+    fun subscribe(): LiveData<AppState> {
+        return liveDataForViewToObserve
+    }
+
     private var appState: AppState? = null
 
-    override fun getData(word: String, isOnline: Boolean): LiveData<AppState> {
+    override fun getData(word: String, isOnline: Boolean) {
         compositeDisposable.add(
             interactor.getData(word, isOnline)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { liveDataForViewToObserve.value = AppState.Loading(null) }
+                .doOnSubscribe(doOnSubscribe())
                 .subscribeWith(getObserver())
         )
-        Log.d("zopa", word)
-        return super.getData(word, isOnline)
     }
+
+    private fun doOnSubscribe(): (Disposable) -> Unit =
+        { liveDataForViewToObserve.value = AppState.Loading(null) }
 
     private fun getObserver(): DisposableObserver<AppState> {
         return object : DisposableObserver<AppState>() {
 
             override fun onNext(state: AppState) {
-                appState = state
-                liveDataForViewToObserve.value = state
+                appState = parseSearchResults(state)
+                liveDataForViewToObserve.value = appState
             }
 
             override fun onError(e: Throwable) {
