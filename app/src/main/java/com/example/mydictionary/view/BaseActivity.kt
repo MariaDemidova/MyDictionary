@@ -11,7 +11,7 @@ import com.example.mydictionary.utils.network.isOnline
 import com.example.mydictionary.viewModel.BaseViewModel
 import com.example.mydictionary.viewModel.Interactor
 
-abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity(){
+abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
 
     abstract val model: BaseViewModel<T>
 
@@ -38,7 +38,8 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     }
 
     protected fun showAlertDialog(title: String?, message: String?) {
-        AlertDialogFragment.newInstance(title, message).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
+        AlertDialogFragment.newInstance(title, message)
+            .show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
     }
 
     private fun isDialogNull(): Boolean {

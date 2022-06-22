@@ -14,31 +14,30 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var onSearchClickListener: OnSearchClickListener? = null
 
-private val textWatcher = object : TextWatcher{
+    private val textWatcher = object : TextWatcher {
 
-    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
 
-    }
-
-    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count:
-    Int) {
-        if (binding.searchEditText.text != null &&
-            !binding.searchEditText.text.toString()
-                .isEmpty()
+        override fun onTextChanged(
+            s: CharSequence, start: Int, before: Int, count:
+            Int
         ) {
-            binding.searchButtonTextview.isEnabled = true
-            binding.clearTextImageview.visibility = View.VISIBLE
-        } else {
-            binding.searchButtonTextview.isEnabled = false
-            binding.clearTextImageview.visibility = View.GONE
+            if (binding.searchEditText.text != null &&
+                !binding.searchEditText.text.toString()
+                    .isEmpty()
+            ) {
+                binding.searchButtonTextview.isEnabled = true
+                binding.clearTextImageview.visibility = View.VISIBLE
+            } else {
+                binding.searchButtonTextview.isEnabled = false
+                binding.clearTextImageview.visibility = View.GONE
+            }
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
         }
     }
-
-    override fun afterTextChanged(p0: Editable?) {
-
-    }
-
-}
 
     private val onSearchButtonClickListener =
         View.OnClickListener {
@@ -77,10 +76,16 @@ private val textWatcher = object : TextWatcher{
 
         fun onClick(searchWord: String)
     }
+
     companion object {
         fun newInstance(): SearchDialogFragment {
             return SearchDialogFragment()
         }
     }
+    override fun onDestroyView() {
+        onSearchClickListener = null
+        super.onDestroyView()
+    }
+
 
 }
