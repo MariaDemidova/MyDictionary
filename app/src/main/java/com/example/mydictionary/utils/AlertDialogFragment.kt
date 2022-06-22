@@ -7,13 +7,13 @@ import androidx.appcompat.app.AppCompatDialogFragment
 class AlertDialogFragment : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val context = activity
-        var alertDialog = getStubAlertDialog(context!!)
+       // val context = activity
+        var alertDialog = getStubAlertDialog(requireContext())
         val args = arguments
         if (args != null) {
             val title = args.getString(TITLE_EXTRA)
             val message = args.getString(MESSAGE_EXTRA)
-            alertDialog = getAlertDialog(context, title, message)
+            alertDialog = getAlertDialog(requireContext(), title, message)
         }
         return alertDialog
     }
